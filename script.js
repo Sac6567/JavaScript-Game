@@ -2,10 +2,30 @@ window.addEventListener("load", function () {
   // canvas setup
   const canvas = this.document.getElementById("canvas1");
   const ctx = canvas.getContext("2d"); //use to draw and animate 2d/webgl
-  canvas.width = 500;
+  canvas.width = 1500;
   canvas.height = 500;
 
-  class InputHandler {}
+  class InputHandler {
+    constructor(game) {
+      this.game = game;
+      window.addEventListener("keydown", (e) => {
+        if (
+          (e.key === "ArrowUp" || e.key === "ArrowDown") &&
+          this.game.keys.indexOf(e.key) == -1
+        ) {
+          this.game.keys.push(e.key);
+        }
+        console.log(this.game.keys);
+      });
+      window.addEventListener("keyup", (e) => {
+        // .indexOf() returns first index at which a given element can be found in the array or it returns -1
+        if (this.game.keys.indexOf(e.key) > -1) {
+          this.game.keys.splice(this.game.keys.indexOf(e.key), 1);
+        }
+        console.log(this.game.keys);
+      });
+    }
+  }
   class Projectile {}
   class Particle {}
   class Player {
@@ -16,8 +36,13 @@ window.addEventListener("load", function () {
       this.x = 20;
       this.y = 100;
       this.speedY = 0;
+      this.maxSpeed = 3;
     }
     update() {
+      // .includes() determines whether an array includes a certain value among its entries, returning true or false
+      if (this.game.keys.includes("ArrowUp")) this.speedY = -maxSpeed;
+      else if (this.game.keys.includes("ArrowDown")) this.speedY = maxSpeed;
+      else this.speedY = 0;
       this.y += this.speedY;
     }
     draw(context) {
@@ -33,6 +58,8 @@ window.addEventListener("load", function () {
       this.width = width;
       this.height = height;
       this.player = new Player(this);
+      this.input = new InputHandler(this);
+      this.keys = [];
     }
     update() {
       this.player.update();
